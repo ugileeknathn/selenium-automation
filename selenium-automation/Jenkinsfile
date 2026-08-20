@@ -1,23 +1,40 @@
 pipeline {
     agent any
 
+    tools {
+        // Use the Maven installation configured in Jenkins (named "Default")
+        maven 'Default'
+    }
+
     stages {
         stage('Checkout') {
             steps {
+                // Clone your GitHub repository
                 git branch: 'master', url: 'https://github.com/ugileeknathn/selenium-automation.git'
             }
         }
 
         stage('Build') {
             steps {
+                // Clean and build the project using Maven
                 bat 'mvn clean install'
             }
         }
 
         stage('Run Tests') {
             steps {
+                // Run your test suite
                 bat 'mvn test'
             }
+        }
+    }
+
+    post {
+        success {
+            echo '✅ Build and tests completed successfully!'
+        }
+        failure {
+            echo '❌ Build failed. Check console output for details.'
         }
     }
 }
