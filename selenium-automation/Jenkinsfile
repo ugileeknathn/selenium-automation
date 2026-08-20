@@ -1,0 +1,23 @@
+pipeline {
+    agent any
+
+    stages {
+        stage('Checkout') {
+            steps {
+                git branch: 'master', url: 'https://github.com/ugileeknathn/selenium-automation.git'
+            }
+        }
+
+        stage('Build') {
+            steps {
+                bat 'mvn clean install'
+            }
+        }
+
+        stage('Run Tests') {
+            steps {
+                bat 'mvn test'
+            }
+        }
+    }
+}
