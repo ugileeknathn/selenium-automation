@@ -31,7 +31,7 @@ public class NaukariMe {
 	        FileInputStream fis = new FileInputStream("src/test/resources/config.properties");
 			prop.load(fis);
 		
-	        String url = prop.getProperty("url");
+	        String url = prop.getProperty("naukariurl");
 	        String user = prop.getProperty("username");
 	        String pass = prop.getProperty("password");
 	        
