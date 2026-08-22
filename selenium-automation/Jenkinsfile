@@ -21,14 +21,17 @@ pipeline {
         }
 
 		stage('Publish TestNG Report') {
-    		steps {
-        		 publishHTML([
-           		 reportDir: 'selenium-automation/test-output',
-           		 reportFiles: 'index.html',
-           		 reportName: 'TestNG Detailed Report'])
-   			 }
-		}
-
+    steps {
+        publishHTML([
+            allowMissing: false,
+            alwaysLinkToLastBuild: true,
+            keepAll: true,
+            reportDir: 'selenium-automation/test-output',
+            reportFiles: 'index.html',
+            reportName: 'TestNG Detailed Report'
+        ])
+    }
+}
         // New stage to verify file path
         stage('Verify Resume File') {
             steps {
