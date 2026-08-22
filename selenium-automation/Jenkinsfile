@@ -20,14 +20,23 @@ pipeline {
             }
         }
 
-        // ✅ New stage to verify file path
+		stage('Publish TestNG Report') {
+    		steps {
+        		 publishHTML([
+           		 reportDir: 'selenium-automation/test-output',
+           		 reportFiles: 'index.html',
+           		 reportName: 'TestNG Detailed Report'])
+   			 }
+		}
+
+        // New stage to verify file path
         stage('Verify Resume File') {
             steps {
                 dir('selenium-automation') {
                     // Print the resolved path
-                    bat 'echo Resume path: %cd%/src/test/resources/Eknath_Ugile_Resume.pdf'
+                    bat 'echo Resume path: %cd%\\src\\test\\resources\\Eknath_Ugile_Resume.pdf'
                     // List files in resources folder
-                    bat 'dir src/test/resources'
+                    bat 'dir src\\test\\resources'
                 }
             }
         }
