@@ -2,7 +2,9 @@
 <suite name="DailyAutomationSuite">
     <test name="AutomationTest">
         <classes>
-            <class name="com.example.selenium_automation.DailyAutomationTest"/>
+            <!-- <class name="com.example.selenium_automation.DailyAutomationTest"/> -->
+            <class name="com.example.selenium_automation.NaukariMe"/>
+            
         </classes>
     </test>
 </suite>
