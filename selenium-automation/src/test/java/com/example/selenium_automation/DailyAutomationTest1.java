@@ -4,7 +4,7 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.testng.annotations.Test;
 
-public class DailyAutomationTest {
+public class DailyAutomationTest1 {
     @Test
     public void openWebsite() {
         WebDriver driver = new ChromeDriver();
