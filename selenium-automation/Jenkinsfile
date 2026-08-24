@@ -5,7 +5,40 @@ pipeline {
         maven 'Default'
     }
 
+    // 🔹 Cron trigger: 7 runs per day at specific hours
+    triggers {
+        cron('H 8,9,11,13,15,16,18 * * *')
+    }
+
     stages {
+        stage('Initialize Run Window') {
+            steps {
+                script {
+                    // File to store the first run date
+                    def startFile = "${env.WORKSPACE}/pipeline_start.txt"
+
+                    if (!fileExists(startFile)) {
+                        // First run → record today's date
+                        writeFile file: startFile, text: new Date().format("yyyy-MM-dd")
+                        echo "Pipeline start date recorded."
+                    } else {
+                        // Read the recorded start date
+                        def startDateStr = readFile(startFile).trim()
+                        def startDate = Date.parse("yyyy-MM-dd", startDateStr)
+                        def cutoffDate = startDate + 8 // 8 days after first run
+                        def today = new Date()
+
+                        if (today.after(cutoffDate)) {
+                            currentBuild.result = 'ABORTED'
+                            error("Pipeline stopped automatically after 8 days from first run.")
+                        } else {
+                            echo "Pipeline still within 8-day window (cutoff: ${cutoffDate})."
+                        }
+                    }
+                }
+            }
+        }
+
         stage('Checkout') {
             steps {
                 git branch: 'master', url: 'https://github.com/ugileeknathn/selenium-automation.git'
@@ -20,25 +53,23 @@ pipeline {
             }
         }
 
-		stage('Publish TestNG Report') {
-    steps {
-        publishHTML([
-            allowMissing: false,
-            alwaysLinkToLastBuild: true,
-            keepAll: true,
-            reportDir: 'selenium-automation/test-output',
-            reportFiles: 'index.html',
-            reportName: 'TestNG Detailed Report'
-        ])
-    }
-}
-        // New stage to verify file path
+        stage('Publish TestNG Report') {
+            steps {
+                publishHTML([
+                    allowMissing: false,
+                    alwaysLinkToLastBuild: true,
+                    keepAll: true,
+                    reportDir: 'selenium-automation/test-output',
+                    reportFiles: 'index.html',
+                    reportName: 'TestNG Detailed Report'
+                ])
+            }
+        }
+
         stage('Verify Resume File') {
             steps {
                 dir('selenium-automation') {
-                    // Print the resolved path
                     bat 'echo Resume path: %cd%\\src\\test\\resources\\Eknath_Ugile_Resume.pdf'
-                    // List files in resources folder
                     bat 'dir src\\test\\resources'
                 }
             }
@@ -61,10 +92,10 @@ pipeline {
 
     post {
         success {
-            echo ' Build and tests completed successfully!'
+            echo 'Build and tests completed successfully!'
         }
         failure {
-            echo ' Build failed. Check console output for details.'
+            echo 'Build failed. Check console output for details.'
         }
     }
 }

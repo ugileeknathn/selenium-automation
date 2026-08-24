@@ -35,7 +35,7 @@ public class NaukariMe {
         String url = prop.getProperty("naukariurl");
         String user = prop.getProperty("username");
         String pass = prop.getProperty("password");
-        String filepath = System.getProperty("user.dir") + "/src/test/resources/Eknath_Ugile_Resume.pdf";
+        String filepath = System.getProperty("user.dir") + "/src/test/resources/Tanuja_Ugile.pdf";
 
         NaukriHomePage.openUrl(url);
         NaukriHomePage.enterUsername(user);
