@@ -23,17 +23,20 @@ pipeline {
                         echo "Pipeline start date recorded."
                     } else {
                         // Read the recorded start date
-                        def startDateStr = readFile(startFile).trim()
-                        def startDate = Date.parse("yyyy-MM-dd", startDateStr)
-                        def cutoffDate = startDate + 8 // 8 days after first run
-                        def today = new Date()
-
-                        if (today.after(cutoffDate)) {
-                            currentBuild.result = 'ABORTED'
-                            error("Pipeline stopped automatically after 8 days from first run.")
-                        } else {
-                            echo "Pipeline still within 8-day window (cutoff: ${cutoffDate})."
-                        }
+                       def sdf = new java.text.SimpleDateFormat("yyyy-MM-dd")
+						def startDateStr = readFile(startFile).trim()
+						def startDate = sdf.parse(startDateStr)
+						
+						// Add 8 days in milliseconds
+						def cutoffDate = new Date(startDate.getTime() + (8L * 24 * 60 * 60 * 1000))
+						def today = new Date()
+						
+						if (today.after(cutoffDate)) {
+						    currentBuild.result = 'ABORTED'
+						    error("Pipeline stopped automatically after 8 days from first run.")
+						} else {
+						    echo "Pipeline still within 8-day window (cutoff: ${sdf.format(cutoffDate)})."
+						}
                     }
                 }
             }
